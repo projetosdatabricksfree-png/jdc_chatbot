@@ -1,6 +1,9 @@
 # Secrets — NUNCA versionar
 .env
 
+# Ambiente virtual (nunca versionar)
+.venv/
+
 # Python
 __pycache__/
 *.py[cod]

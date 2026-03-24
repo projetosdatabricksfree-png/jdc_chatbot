@@ -1,7 +1,30 @@
+# ============================================================
+# JDC Chatbot — Dependências Python
+# ============================================================
+
+# Telegram Bot Framework (async, v20+)
 python-telegram-bot==20.7
+
+# Anthropic Claude API
 anthropic>=0.20.0
+
+# Transcrição de voz (Whisper — execução local)
 openai-whisper>=20231117
+
+# PyTorch (backend do Whisper — CPU)
+# Para GPU NVIDIA, substitua por: pip install torch --index-url https://download.pytorch.org/whl/cu121
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# Processamento de áudio (requer ffmpeg instalado no sistema)
+pydub>=0.25.1
+
+# Configuração e variáveis de ambiente
 pydantic-settings>=2.0.0
 python-dotenv>=1.0.0
-pydub>=0.25.1
+
+# Logging estruturado
 loguru>=0.7.0
+
+# Utilitários
+numpy>=1.24.0

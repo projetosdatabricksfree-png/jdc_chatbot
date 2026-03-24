@@ -9,13 +9,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await update.message.reply_text(
         f"Olá, {user.first_name}! 👋\n\n"
-        "Sou o assistente do programa *Jornada das Conquistas (JDC)* da CAIXA Vida e Previdência.\n\n"
-        "Pode me perguntar sobre:\n"
-        "• Blocos e sub blocos de pontuação\n"
-        "• Metas mensais e anuais\n"
-        "• Fórmulas de cálculo\n"
-        "• Glossário do programa\n\n"
+        "Sou o assistente oficial do programa *Jornada das Conquistas (JDC)* — CAIXA Vida e Previdência.\n\n"
+        "Estou disponível para todas as gerências da CVP e posso te ajudar com:\n\n"
+        "📊 *Pontuação e blocos* — Geração de Valor, Protagonismo, Mobilizador\n"
+        "🎯 *Metas* — mensais, acumuladas e anuais\n"
+        "🧮 *Fórmulas e métricas* — como cada indicador é calculado\n"
+        "📖 *Glossário* — Prestamista, ITDV, Port In/Out e mais\n"
+        "❓ *FAQ* — as dúvidas mais comuns do programa\n\n"
         "Pode enviar sua dúvida por *texto* ou *áudio* 🎙️\n\n"
+        "⚠️ Para dúvidas fora do JDC, a área *COTAT* da CVP pode te ajudar.\n\n"
         "_Use /help para ver todos os comandos disponíveis._",
         parse_mode="Markdown",
     )
