@@ -23,6 +23,9 @@ pydub>=0.25.1
 pydantic-settings>=2.0.0
 python-dotenv>=1.0.0
 
+# Text-to-Speech neural pt-BR (Microsoft Edge TTS — sem API key)
+edge-tts>=6.1.9
+
 # Logging estruturado
 loguru>=0.7.0
 

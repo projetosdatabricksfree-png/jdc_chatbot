@@ -6,17 +6,19 @@ from loguru import logger
 
 from src.llm.client import ask_claude
 from src.transcription.whisper_client import transcribe_audio
+from src.tts.client import text_to_voice_ogg
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """
     Processa mensagens de voz recebidas pelo bot.
 
-    Fluxo:
-    1. Baixa o arquivo OGG/OPUS do Telegram
-    2. Transcreve o áudio via Whisper
-    3. Envia o texto transcrito ao Claude em modo voz (resposta curta)
-    4. Retorna a resposta ao consultor
+    Fluxo completo:
+    1. Baixa o OGG/OPUS do Telegram
+    2. Transcreve via Whisper (pt-BR)
+    3. Envia texto ao Claude em modo voz (resposta curta)
+    4. Converte resposta para áudio via edge-tts
+    5. Envia resposta como mensagem de voz
     """
     user = update.effective_user
     voice = update.message.voice
@@ -28,48 +30,57 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     await update.message.chat.send_action("typing")
 
-    # Feedback imediato enquanto processa
     processing_msg = await update.message.reply_text(
         "🎙️ Recebi seu áudio, transcrevendo..."
     )
 
     try:
-        # Download do arquivo de voz
+        # 1. Download do arquivo de voz
         voice_file = await voice.get_file()
         buffer = io.BytesIO()
         await voice_file.download_to_memory(buffer)
         audio_bytes = buffer.getvalue()
 
-        # Transcrição
+        # 2. Transcrição
         transcript = transcribe_audio(audio_bytes, file_extension="ogg")
         logger.info(f"[VOICE] Transcrição: '{transcript[:80]}'")
 
-        # Confirmação da transcrição para o usuário
         await processing_msg.edit_text(
-            f"🎙️ *Você perguntou:* _{transcript}_",
+            f"🎙️ *Você perguntou:* _{transcript}_\n\n⏳ Gerando resposta...",
             parse_mode="Markdown",
         )
 
-        await update.message.chat.send_action("typing")
+        await update.message.chat.send_action("record_voice")
 
-        # Resposta do Claude em modo voz (respostas curtas e diretas)
-        reply = await ask_claude(
+        # 3. Resposta do Claude (modo voz = resposta curta e direta)
+        reply_text = await ask_claude(
             user_id=user.id,
             user_message=transcript,
             voice_mode=True,
         )
 
-        await update.message.reply_text(reply, parse_mode="Markdown")
+        # 4. Converte resposta para áudio OGG
+        voice_bytes = await text_to_voice_ogg(reply_text)
+
+        # 5. Envia como mensagem de voz
+        await update.message.reply_voice(
+            voice=io.BytesIO(voice_bytes),
+            caption=f"_{reply_text[:900]}_" if len(reply_text) <= 900 else None,
+            parse_mode="Markdown" if len(reply_text) <= 900 else None,
+        )
+
+        # Remove a mensagem de status intermediária
+        await processing_msg.delete()
 
     except RuntimeError as exc:
-        logger.error(f"[VOICE] Falha na transcrição para user_id={user.id}: {exc}")
+        logger.error(f"[VOICE] Falha para user_id={user.id}: {exc}")
         await processing_msg.edit_text(
-            "Não consegui transcrever seu áudio. "
-            "Por favor, tente enviar sua dúvida por texto."
+            "⚠️ Não consegui processar seu áudio.\n"
+            "Por favor, envie sua dúvida por *texto*.",
+            parse_mode="Markdown",
         )
     except Exception as exc:
         logger.error(f"[VOICE] Erro inesperado para user_id={user.id}: {exc}")
         await processing_msg.edit_text(
-            "Ocorreu um erro ao processar seu áudio. "
-            "Tente novamente ou envie sua dúvida por texto."
+            "⚠️ Ocorreu um erro inesperado. Tente novamente ou envie sua dúvida por texto."
         )
