@@ -42,5 +42,8 @@ async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     user_id = update.effective_user.id
     clear_history(user_id)
     await update.message.reply_text(
-        "Histórico limpo! Pode começar uma nova conversa. ✅"
+        "🗑️ *Histórico apagado com sucesso!*\n\n"
+        "Não me lembro mais de nada que conversamos antes. "
+        "Pode começar uma nova conversa do zero.",
+        parse_mode="Markdown",
     )
