@@ -1,0 +1,7 @@
+python-telegram-bot==20.7
+anthropic>=0.20.0
+openai-whisper>=20231117
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+pydub>=0.25.1
+loguru>=0.7.0

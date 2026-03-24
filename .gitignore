@@ -1,0 +1,38 @@
+# Secrets — NUNCA versionar
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Logs
+logs/*.log
+*.log
+
+# Whisper model cache
+~/.cache/whisper/
+
+# Temp audio files
+/tmp/*.ogg
+/tmp/*.wav
+/tmp/*.mp3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
