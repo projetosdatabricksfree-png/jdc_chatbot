@@ -24,8 +24,9 @@ def _append_to_history(user_id: int, role: str, content: str) -> None:
 
 
 def clear_history(user_id: int) -> None:
+    count = len(_conversation_history[user_id])
     _conversation_history[user_id].clear()
-    logger.debug(f"Histórico limpo para user_id={user_id}")
+    logger.info(f"[HISTORY] Histórico limpo | user_id={user_id} | {count} mensagens removidas")
 
 
 async def ask_claude(
